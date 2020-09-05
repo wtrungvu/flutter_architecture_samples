@@ -8,9 +8,9 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   StreamSubscription todosSubscription;
 
   StatsBloc({@required this.todosBloc}) {
-    todosSubscription = todosBloc.state.listen((state) {
+    todosSubscription = todosBloc.listen((state) {
       if (state is TodosLoaded) {
-        dispatch(UpdateStats(state.todos));
+        add(UpdateStats(state.todos));
       }
     });
   }
@@ -21,17 +21,17 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   @override
   Stream<StatsState> mapEventToState(StatsEvent event) async* {
     if (event is UpdateStats) {
-      int numActive =
+      var numActive =
           event.todos.where((todo) => !todo.complete).toList().length;
-      int numCompleted =
+      var numCompleted =
           event.todos.where((todo) => todo.complete).toList().length;
       yield StatsLoaded(numActive, numCompleted);
     }
   }
 
   @override
-  void dispose() {
-    todosSubscription.cancel();
-    super.dispose();
+  Future<void> close() {
+    todosSubscription?.cancel();
+    return super.close();
   }
 }

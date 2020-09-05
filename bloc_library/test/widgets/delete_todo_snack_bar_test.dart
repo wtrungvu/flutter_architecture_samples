@@ -8,7 +8,7 @@ import 'package:todos_app_core/todos_app_core.dart';
 import 'package:bloc_library/widgets/delete_todo_snack_bar.dart';
 import 'package:bloc_library/models/models.dart';
 
-main() {
+void main() {
   group('DeleteTodoSnackBar', () {
     testWidgets('should render properly', (WidgetTester tester) async {
       var snackBarKey = Key('snack_bar_key');
@@ -38,7 +38,7 @@ main() {
       await tester.tap(find.byKey(tapTarget));
       await tester.pump();
 
-      Finder snackBarFinder = find.byKey(snackBarKey);
+      var snackBarFinder = find.byKey(snackBarKey);
 
       expect(snackBarFinder, findsOneWidget);
       expect(
@@ -51,7 +51,7 @@ main() {
 
     testWidgets('should call onUndo when undo tapped',
         (WidgetTester tester) async {
-      int tapCount = 0;
+      var tapCount = 0;
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: Builder(builder: (BuildContext context) {

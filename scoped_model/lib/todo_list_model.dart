@@ -31,7 +31,7 @@ class TodoListModel extends Model {
   bool get isLoading => _isLoading;
 
   TodoListModel({@required this.repository, VisibilityFilter activeFilter})
-      : this._activeFilter = activeFilter ?? VisibilityFilter.all;
+      : _activeFilter = activeFilter ?? VisibilityFilter.all;
 
   /// Wraps [ScopedModel.of] for this [Model]. See [ScopedModel.of] for more
   static TodoListModel of(BuildContext context) =>
@@ -63,12 +63,14 @@ class TodoListModel extends Model {
   }
 
   List<Todo> get filteredTodos => _todos.where((todo) {
-        if (activeFilter == VisibilityFilter.all) {
-          return true;
-        } else if (activeFilter == VisibilityFilter.active) {
-          return !todo.complete;
-        } else if (activeFilter == VisibilityFilter.completed) {
-          return todo.complete;
+        switch (activeFilter) {
+          case VisibilityFilter.active:
+            return !todo.complete;
+          case VisibilityFilter.completed:
+            return todo.complete;
+          case VisibilityFilter.all:
+          default:
+            return true;
         }
       }).toList();
 

@@ -54,8 +54,7 @@ class TodoList extends StatelessWidget {
             });
           },
           onCheckboxChanged: (complete) {
-            TodosBlocProvider
-                .of(context)
+            TodosBlocProvider.of(context)
                 .updateTodo(todo.copyWith(complete: !todo.complete));
           },
         );
@@ -73,7 +72,6 @@ class TodoList extends StatelessWidget {
     final snackBar = SnackBar(
       key: ArchSampleKeys.snackbar,
       duration: Duration(seconds: 2),
-      backgroundColor: Theme.of(context).backgroundColor,
       content: Text(
         ArchSampleLocalizations.of(context).todoDeleted(todo.task),
         maxLines: 1,

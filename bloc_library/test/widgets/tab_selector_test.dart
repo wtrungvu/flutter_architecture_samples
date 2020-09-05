@@ -9,7 +9,7 @@ import 'package:todos_app_core/todos_app_core.dart';
 import 'package:bloc_library/widgets/tab_selector.dart';
 import 'package:bloc_library/models/models.dart';
 
-main() {
+void main() {
   group('TabSelector', () {
     testWidgets('should render properly', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -34,7 +34,8 @@ main() {
 
     testWidgets('should call onTabSelected with correct index when tab tapped',
         (WidgetTester tester) async {
-      AppTab selectedTab = null;
+      AppTab selectedTab;
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -53,8 +54,8 @@ main() {
         ),
       );
       await tester.pumpAndSettle();
-      Finder todoTabFinder = find.byKey(ArchSampleKeys.todoTab);
-      Finder statsTabFinder = find.byKey(ArchSampleKeys.statsTab);
+      final todoTabFinder = find.byKey(ArchSampleKeys.todoTab);
+      final statsTabFinder = find.byKey(ArchSampleKeys.statsTab);
       expect(todoTabFinder, findsOneWidget);
       expect(statsTabFinder, findsOneWidget);
       await tester.tap(todoTabFinder);

@@ -60,7 +60,6 @@ class TodoList extends StatelessWidget {
 
     Scaffold.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
-        backgroundColor: Theme.of(context).backgroundColor,
         content: Text(
           ArchSampleLocalizations.of(context).todoDeleted(todo.task),
           maxLines: 1,
@@ -73,17 +72,15 @@ class TodoList extends StatelessWidget {
   }
 
   void _onTodoTap(BuildContext context, Todo todo) {
-    Navigator
-        .of(context)
+    Navigator.of(context)
         .push(MaterialPageRoute(
-          builder: (_) => TodoDetails(id: todo.id),
-        ))
+      builder: (_) => TodoDetails(id: todo.id),
+    ))
         .then((removedTodo) {
       if (removedTodo != null) {
         Scaffold.of(context).showSnackBar(SnackBar(
             key: ArchSampleKeys.snackbar,
             duration: Duration(seconds: 2),
-            backgroundColor: Theme.of(context).backgroundColor,
             content: Text(
               ArchSampleLocalizations.of(context).todoDeleted(todo.task),
               maxLines: 1,

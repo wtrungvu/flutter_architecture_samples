@@ -2,46 +2,37 @@
 // Use of this source code is governed by the MIT license that can be found
 // in the LICENSE file.
 
-import 'package:bloc_flutter_sample/dependency_injection.dart';
-import 'package:bloc_flutter_sample/localization.dart';
-import 'package:bloc_flutter_sample/screens/add_edit_screen.dart';
-import 'package:bloc_flutter_sample/screens/home_screen.dart';
-import 'package:bloc_flutter_sample/widgets/todos_bloc_provider.dart';
-import 'package:blocs/blocs.dart';
-import 'package:flutter/material.dart';
-import 'package:todos_app_core/todos_app_core.dart';
-import 'package:meta/meta.dart';
-import 'package:todos_repository_core/todos_repository_core.dart';
+import 'dart:async';
 
-void main({
-  @required TodosInteractor todosInteractor,
-  @required UserRepository userRepository,
-}) {
-  runApp(Injector(
-    todosInteractor: todosInteractor,
-    userRepository: userRepository,
-    child: TodosBlocProvider(
-      bloc: TodosListBloc(todosInteractor),
-      child: MaterialApp(
-        title: BlocLocalizations().appTitle,
-        theme: ArchSampleTheme.theme,
-        localizationsDelegates: [
-          ArchSampleLocalizationsDelegate(),
-          InheritedWidgetLocalizationsDelegate(),
-        ],
-        routes: {
-          ArchSampleRoutes.home: (context) {
-            return HomeScreen(
-              repository: Injector.of(context).userRepository,
-            );
-          },
-          ArchSampleRoutes.addTodo: (context) {
-            return AddEditScreen(
-              addTodo: TodosBlocProvider.of(context).addTodo.add,
-            );
-          },
-        },
+import 'package:bloc_flutter_sample/app.dart';
+import 'package:blocs/blocs.dart';
+import 'package:flutter/widgets.dart';
+import 'package:key_value_store_flutter/key_value_store_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todos_repository_core/todos_repository_core.dart';
+import 'package:todos_repository_local_storage/todos_repository_local_storage.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(BlocApp(
+    todosInteractor: TodosInteractor(
+      ReactiveLocalStorageRepository(
+        repository: LocalStorageRepository(
+          localStorage: KeyValueStorage(
+            'bloc_todos',
+            FlutterKeyValueStore(await SharedPreferences.getInstance()),
+          ),
+        ),
       ),
     ),
+    userRepository: AnonymousUserRepository(),
   ));
+}
+
+class AnonymousUserRepository implements UserRepository {
+  @override
+  Future<UserEntity> login() {
+    return Future.value(UserEntity(id: 'anonymous'));
+  }
 }

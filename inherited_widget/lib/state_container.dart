@@ -5,9 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:inherited_widget_sample/models.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:todos_repository_core/todos_repository_core.dart';
-import 'package:todos_repository_simple/todos_repository_simple.dart';
 
 class StateContainer extends StatefulWidget {
   final AppState state;
@@ -16,18 +14,13 @@ class StateContainer extends StatefulWidget {
 
   StateContainer({
     @required this.child,
-    this.repository = const TodosRepositoryFlutter(
-      fileStorage: const FileStorage(
-        'inherited_widget_sample',
-        getApplicationDocumentsDirectory,
-      ),
-    ),
+    this.repository,
     this.state,
   });
 
   static StateContainerState of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(_InheritedStateContainer)
-            as _InheritedStateContainer)
+    return context
+        .dependOnInheritedWidgetOfExactType<_InheritedStateContainer>()
         .data;
   }
 
@@ -142,7 +135,7 @@ class _InheritedStateContainer extends InheritedWidget {
   bool updateShouldNotify(_InheritedStateContainer old) => true;
 }
 
-typedef TodoUpdater(
+typedef TodoUpdater = void Function(
   Todo todo, {
   bool complete,
   String id,

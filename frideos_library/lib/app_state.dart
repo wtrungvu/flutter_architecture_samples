@@ -1,6 +1,6 @@
 import 'package:path_provider/path_provider.dart';
 
-import 'package:todos_repository_simple/todos_repository_simple.dart';
+import 'package:todos_repository_local_storage/todos_repository_local_storage.dart';
 
 import 'package:frideos/frideos.dart';
 
@@ -17,15 +17,15 @@ class AppState extends AppStateModel {
     return _singletonAppState;
   }
 
-  TodosRepositoryFlutter respository;
+  LocalStorageRepository respository;
   TodosBloc todosBloc;
   StatsBloc statsBloc;
   final tabController = StreamedValue<AppTab>(initialData: AppTab.todos);
 
   @override
-  init() {
-    respository = const TodosRepositoryFlutter(
-      fileStorage: const FileStorage(
+  void init() {
+    respository = const LocalStorageRepository(
+      localStorage: FileStorage(
         'frideos_library',
         getApplicationDocumentsDirectory,
       ),
@@ -38,7 +38,7 @@ class AppState extends AppStateModel {
   }
 
   @override
-  dispose() {
+  void dispose() {
     todosBloc.dispose();
     statsBloc.dispose();
     tabController.dispose();

@@ -1,66 +1,16 @@
-// Copyright 2018 The Flutter Architecture Sample Authors. All rights reserved.
-// Use of this source code is governed by the MIT license that can be found
-// in the LICENSE file.
+import 'package:bloc_library/run_app.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:key_value_store_flutter/key_value_store_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todos_repository_local_storage/todos_repository_local_storage.dart';
 
-import 'package:flutter/material.dart';
-import 'package:bloc/bloc.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todos_repository_simple/todos_repository_simple.dart';
-import 'package:todos_app_core/todos_app_core.dart';
-import 'package:bloc_library/localization.dart';
-import 'package:bloc_library/blocs/blocs.dart';
-import 'package:bloc_library/models/models.dart';
-import 'package:bloc_library/screens/screens.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
-  // BlocSupervisor oversees Blocs and delegates to BlocDelegate.
-  // We can set the BlocSupervisor's delegate to an instance of `SimpleBlocDelegate`.
-  // This will allow us to handle all transitions and errors in SimpleBlocDelegate.
-  BlocSupervisor().delegate = SimpleBlocDelegate();
-  runApp(BlocApp());
-}
-
-class BlocApp extends StatelessWidget {
-  final todosBloc = TodosBloc(
-    todosRepository: const TodosRepositoryFlutter(
-      fileStorage: const FileStorage(
-        '__flutter_bloc_app__',
-        getApplicationDocumentsDirectory,
-      ),
+  runBlocLibraryApp(LocalStorageRepository(
+    localStorage: KeyValueStorage(
+      'bloc_library',
+      FlutterKeyValueStore(await SharedPreferences.getInstance()),
     ),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      bloc: todosBloc,
-      child: MaterialApp(
-        title: FlutterBlocLocalizations().appTitle,
-        theme: ArchSampleTheme.theme,
-        localizationsDelegates: [
-          ArchSampleLocalizationsDelegate(),
-          FlutterBlocLocalizationsDelegate(),
-        ],
-        routes: {
-          ArchSampleRoutes.home: (context) {
-            return HomeScreen(
-              onInit: () => todosBloc.dispatch(LoadTodos()),
-            );
-          },
-          ArchSampleRoutes.addTodo: (context) {
-            return AddEditScreen(
-              key: ArchSampleKeys.addTodoScreen,
-              onSave: (task, note) {
-                todosBloc.dispatch(
-                  AddTodo(Todo(task, note: note)),
-                );
-              },
-              isEditing: false,
-            );
-          },
-        },
-      ),
-    );
-  }
+  ));
 }

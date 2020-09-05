@@ -12,14 +12,14 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'package:todos_repository_core/todos_repository_core.dart';
 
-main() {
+void main() {
   group('FirebaseUserRepository', () {
     test('should log the user in anonymously', () async {
       final auth = MockFirebaseAuth();
       final repository = FirebaseUserRepository(auth);
 
       when(auth.signInAnonymously())
-          .thenAnswer((_) => Future.value(MockFirebaseUser()));
+          .thenAnswer((_) => Future.value(MockAuthResult()));
 
       final entity = await repository.login();
 
@@ -109,15 +109,22 @@ class MockFirestore extends Mock implements Firestore {}
 class MockCollectionReference extends Mock implements CollectionReference {}
 
 class MockDocumentSnapshot extends Mock implements DocumentSnapshot {
+  @override
   final Map<String, dynamic> data;
 
   MockDocumentSnapshot([this.data]);
 
+  @override
   dynamic operator [](String key) => data[key];
 }
 
 class MockDocumentReference extends Mock implements DocumentReference {}
 
 class MockQuerySnapshot extends Mock implements QuerySnapshot {}
+
+class MockAuthResult extends Mock implements AuthResult {
+  @override
+  final user = MockFirebaseUser();
+}
 
 class MockFirebaseUser extends Mock implements FirebaseUser {}
